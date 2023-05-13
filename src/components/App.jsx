@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Notiflix from 'notiflix';
 import { ImageApi } from '../services/ImageApi';
 import Searchbar from './Searchbar';
