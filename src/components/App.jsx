@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Notiflix from 'notiflix';
 import { ImageApi } from '../services/ImageApi';
 import Searchbar from './Searchbar';
@@ -7,7 +7,7 @@ import Loader from './Loader';
 import Button from './Button';
 import './App.css';
 
-  const App = () => {
+const App = () => {
   const [inputData, setInputData] = useState('');
   const [items, setItems] = useState([]);
   const [status, setStatus] = useState('idle');

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { ImSearch } from 'react-icons/im';
 import css from './Searchbar.module.css';
@@ -13,7 +13,7 @@ const Searchbar = ({ onSubmit }) => {
   const handleSubmit = e => {
     e.preventDefault();
     onSubmit(inputData);
-    setInputData('');
+    setInputData(prevInputData => prevInputData);
   };
 
   return (
