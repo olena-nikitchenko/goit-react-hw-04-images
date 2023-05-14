@@ -13,7 +13,6 @@ const App = () => {
   const [status, setStatus] = useState('idle');
   const [totalHits, setTotalHits] = useState(0);
   const [page, setPage] = useState(1);
-  const [searched, setSearched] = useState(false);
 
   const abortController = useRef(new AbortController());
 
@@ -21,10 +20,6 @@ const App = () => {
     const fetchData = async () => {
       abortController.current.abort();
       abortController.current = new AbortController();
-      if (inputData.trim() === '') {
-        Notiflix.Notify.info('You cannot search by empty field, try again.');
-        return;
-      }
       try {
         setStatus('pending');
         const { totalHits, hits } = await ImageApi(inputData, page, {
@@ -36,32 +31,36 @@ const App = () => {
           Notiflix.Notify.failure(
             'Sorry, there are no images matching your search query. Please try again.'
           );
-        } else {
-          const newHits = hits.map(({ id, webformatURL, largeImageURL }) => ({
-            id,
-            webformatURL,
-            largeImageURL,
-          }));
-          setItems(prevItems => [...prevItems, ...newHits]);
-          setTotalHits(totalHits);
-          setStatus('resolved');
+          return;
         }
+        const newHits = hits.map(({ id, webformatURL, largeImageURL }) => ({
+          id,
+          webformatURL,
+          largeImageURL,
+        }));
+        setItems(prevItems => [...prevItems, ...newHits]);
+        setTotalHits(totalHits);
+        setStatus('resolved');
       } catch (error) {
         setStatus('rejected');
       }
     };
-    if (searched) {
+    if (inputData.trim() !== '') {
       fetchData();
     }
     return () => {
       abortController.current.abort();
     };
-  }, [inputData, page, searched]);
+  }, [inputData, page]);
 
   const handleSubmit = inputData => {
+    if (inputData.trim() === '') {
+      Notiflix.Notify.info('You cannot search by empty field, try again.');
+      return;
+    }
+    setItems([]);
     setInputData(inputData);
     setPage(1);
-    setSearched(true);
   };
 
   const handleNextPage = () => {
@@ -71,15 +70,16 @@ const App = () => {
   return (
     <div className="App">
       <Searchbar onSubmit={handleSubmit} />
-      {status === 'resolved' && (
+      {status === 'resolved' ? (
         <>
           <ImageGallery items={items} />
           {totalHits > items.length && (
             <Button onClick={handleNextPage}>Load more</Button>
           )}
         </>
+      ) : (
+        status === 'pending' && <Loader />
       )}
-      {status === 'pending' && <Loader />}
       {status === 'rejected' && (
         <p>Something went wrong, please try again later</p>
       )}
