@@ -54,10 +54,6 @@ const App = () => {
   }, [inputData, page]);
 
   const handleSubmit = inputData => {
-    if (inputData.trim() === '') {
-      Notiflix.Notify.info('You cannot search by empty field, try again.');
-      return;
-    }
     setItems([]);
     setInputData(inputData);
     setPage(1);
